@@ -14,13 +14,11 @@ public class ProducerApp {
 
     private static final String TOPIC = "messages";
 
-    // TODO: Inject KafkaTemplate
-    // private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    // TODO: Add constructor injection
-    // public ProducerApp(KafkaTemplate<String, String> kafkaTemplate) {
-    // this.kafkaTemplate = kafkaTemplate;
-    // }
+    public ProducerApp(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(ProducerApp.class, args);
@@ -30,8 +28,7 @@ public class ProducerApp {
     public Map<String, String> sendMessage(@RequestBody Map<String, String> payload) {
         String message = payload.get("message");
 
-        // TODO: Send message to Kafka
-        // kafkaTemplate.send(TOPIC, message);
+        kafkaTemplate.send(TOPIC, message);
 
         System.out.println("Sending message: " + message);
 
