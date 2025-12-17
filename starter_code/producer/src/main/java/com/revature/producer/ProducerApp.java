@@ -12,8 +12,6 @@ import java.util.Map;
 @RequestMapping("/api/messages")
 public class ProducerApp {
 
-    private static final String TOPIC = "messages";
-
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public ProducerApp(KafkaTemplate<String, String> kafkaTemplate) {
@@ -24,17 +22,17 @@ public class ProducerApp {
         SpringApplication.run(ProducerApp.class, args);
     }
 
-    @PostMapping
-    public Map<String, String> sendMessage(@RequestBody Map<String, String> payload) {
+    @PostMapping("/{topic}")
+    public Map<String, String> sendMessage(@PathVariable String topic, @RequestBody Map<String, String> payload) {
         String message = payload.get("message");
 
-        kafkaTemplate.send(TOPIC, message);
+        kafkaTemplate.send(topic, message);
 
         System.out.println("Sending message: " + message);
 
         return Map.of(
                 "status", "sent",
-                "topic", TOPIC,
+                "topic", topic,
                 "message", message);
     }
 

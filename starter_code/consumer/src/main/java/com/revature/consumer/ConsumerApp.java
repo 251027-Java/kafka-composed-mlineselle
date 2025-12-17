@@ -3,6 +3,8 @@ package com.revature.consumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,16 +16,16 @@ import java.util.Map;
 @RequestMapping("/api/messages")
 public class ConsumerApp {
 
-    private final List<String> receivedMessages = new ArrayList<>();
+    private final List<ReceivedMessage> receivedMessages = new ArrayList<>();
 
     public static void main(String[] args) {
         SpringApplication.run(ConsumerApp.class, args);
     }
 
-    @KafkaListener(topics = "messages", groupId = "message-consumers")
-    public void listen(String message) {
-        System.out.println("Received message: " + message);
-        receivedMessages.add(message);
+    @KafkaListener(topics = {"orders", "notifications"}, groupId = "message-consumers")
+    public void listen(String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        System.out.println("Received message with topic ["+ topic +"]: " + message);
+        receivedMessages.add(new ReceivedMessage(topic, message));
     }
 
     @GetMapping
